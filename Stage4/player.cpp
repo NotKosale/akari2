@@ -284,11 +284,11 @@ void Player::movePlayer(float dt)
 	float move = 0.0f;
 	if (graphics::getKeyState(graphics::SCANCODE_A))
 	{
-		move -= 1.0f;
+		move -= 1.5f;
 	}
 	if (graphics::getKeyState(graphics::SCANCODE_D))
 	{
-		move += 1.0f;
+		move += 1.5f;
 	}
 		
 	m_vx = std::min<float>(m_max_velocity, m_vx + delta_time * move * m_accel_horizontal);

@@ -3,7 +3,7 @@
 #include "player.h"
 #include <thread>
 #include <chrono>
-#include "Enemy.h"
+
 using namespace std::chrono_literals;
 
 GameState::GameState()// constructor
@@ -35,8 +35,7 @@ bool GameState::init()// arxikopoiei to current level kai to player
 	m_player = new Player("Player");
 	m_player->init();
 
-	m_enemy = new Enemy("Enemy");
-	m_enemy->init();
+	
 
 
 

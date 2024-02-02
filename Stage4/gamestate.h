@@ -17,7 +17,7 @@ private:
 
 	class Level* m_current_level = 0;
 	class Player* m_player = 0;
-	class Enemy* m_enemy = 0;
+	
 
 
 	GameState();
@@ -43,6 +43,5 @@ public:
 	float getCanvasHeight() { return m_canvas_height; }
 
 	class Player* getPlayer() { return m_player; }
-	class Enemy* getEnemy() { return m_enemy; }
-
+	
 };
