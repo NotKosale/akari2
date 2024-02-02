@@ -37,10 +37,10 @@ public:
 		HEAVYATTACK
 	};
 
-	float playerWidth = 2.0f;
-	float playerHeight = 2.0f;
+	float playerWidth = 1.7f;
+	float playerHeight = 1.7f;
 	float playerCollisionWidth = 0.3f;
-	float playerCollisionHeight = 0.60f;
+	float playerCollisionHeight = 0.51f;
 	bool isCollidingSideways = false;
 	bool isCollidingDown = false;
 	float m_vx = 0.0f;

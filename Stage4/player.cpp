@@ -128,14 +128,14 @@ void Player::draw()
 		{
 			int sprite = (int)fmod(animationtime * 2, m_spritesLightAttackleft.size());
 			m_brush_player.texture = m_spritesLightAttackleft[sprite];
-			graphics::drawRect(m_state->getCanvasWidth() * 0.5f, m_state->getCanvasHeight() * 0.5f, playerWidth, 2.3f, m_brush_player);
+			graphics::drawRect(m_state->getCanvasWidth() * 0.5f, m_state->getCanvasHeight() * 0.5f, playerWidth, playerHeight, m_brush_player);
 			return;
 		}
 		else if (forwardDir == 1)
 		{
 			int sprite = (int)fmod(animationtime * 2, m_spritesLightAttack.size());
 			m_brush_player.texture = m_spritesLightAttack[sprite];
-			graphics::drawRect(m_state->getCanvasWidth() * 0.5f, m_state->getCanvasHeight() * 0.5f, playerWidth, 2.3f, m_brush_player);
+			graphics::drawRect(m_state->getCanvasWidth() * 0.5f, m_state->getCanvasHeight() * 0.5f, playerWidth, playerHeight, m_brush_player);
 		}
 	}
 
@@ -151,14 +151,14 @@ void Player::draw()
 		{
 			int sprite = (int)fmod(animationtime * 2, m_spritesHeavyAttackleft.size());
 			m_brush_player.texture = m_spritesHeavyAttackleft[sprite];
-			graphics::drawRect(m_state->getCanvasWidth() * 0.5f, m_state->getCanvasHeight() * 0.5f, playerWidth, 2.3f, m_brush_player);
+			graphics::drawRect(m_state->getCanvasWidth() * 0.5f, m_state->getCanvasHeight() * 0.5f, playerWidth, playerHeight, m_brush_player);
 			return;
 		}
 		else if (forwardDir == 1)
 		{
 			int sprite = (int)fmod(animationtime * 2, m_spritesHeavyAttack.size());
 			m_brush_player.texture = m_spritesHeavyAttack[sprite];
-			graphics::drawRect(m_state->getCanvasWidth() * 0.5f, m_state->getCanvasHeight() * 0.5f, playerWidth, 2.3f, m_brush_player);
+			graphics::drawRect(m_state->getCanvasWidth() * 0.5f, m_state->getCanvasHeight() * 0.5f, playerWidth, playerHeight, m_brush_player);
 		}
 	}
 
