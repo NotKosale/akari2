@@ -19,7 +19,7 @@ void Coin::update(float dt)
 }
 
 void Coin::draw(float x, float y , float w , float h) {
-	animationtime += 0.07f;
+	animationtime += 0.15f;
 	if (!collected) {
 		
 		

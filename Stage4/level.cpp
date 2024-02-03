@@ -61,7 +61,10 @@ void Level::drawCoin(int i)
 	float x = (box.m_pos_x + m_state->m_global_offset_x);
 	float y = (box.m_pos_y + m_state->m_global_offset_y);
 
-	m_state->getCoin()->draw(x, y , m_block_size, m_block_size);
+	m_state->getCoin()->draw(x, y , 0.4f, 0.4f);
+
+	if (m_state->m_debugging)
+		graphics::drawRect(x, y, m_block_size, m_block_size, m_block_brush_debug);
 }
 
 
@@ -352,7 +355,7 @@ void Level::init()
 					m_blocks_no_collide.emplace_back(y * m_block_size, x * m_block_size, 0.5f, 0.5f);//collisions
 					m_block_no_names.push_back("Tile_51.png");
 				}
-				else if (lvl1[x][y] != "02" && lvl1[x][y] != "55" && lvl1[x][y] != "61" && lvl1[x][y] != "49" && lvl1[x][y] != "51")
+				else if (lvl1[x][y] != "02" && lvl1[x][y] != "55" && lvl1[x][y] != "61" && lvl1[x][y] != "49" && lvl1[x][y] != "51" && lvl1[x][y] != "99")
 				{
 
 					m_blocks.emplace_back(y * m_block_size, x * m_block_size, 0.5f, 0.5f);//collisions
