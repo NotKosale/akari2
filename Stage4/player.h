@@ -22,8 +22,8 @@ class Player : public Box, public GameObject
 
 	graphics::Brush m_brush_player;
 
-	const float m_accel_horizontal = 30.0f;
-	const float m_accel_vertical = 300.1f;
+	const float m_accel_horizontal = 20.0f;
+	const float m_accel_vertical = 250.1f;
 	const float m_max_velocity = 5.0f;
 	const float m_gravity = 10.0f;
 public:
@@ -42,6 +42,7 @@ public:
 	float playerCollisionWidth = 0.3f;
 	float playerCollisionHeight = 0.51f;
 	bool isCollidingSideways = false;
+	bool isTouchingWall = false;
 	bool isCollidingDown = false;
 	float m_vx = 0.0f;
 	float m_vy = 0.0f;

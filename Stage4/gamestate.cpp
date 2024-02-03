@@ -1,6 +1,7 @@
 #include "gamestate.h"
 #include "level.h"
 #include "player.h"
+#include "coin.h"
 #include <thread>
 #include <chrono>
 
@@ -27,13 +28,28 @@ GameState* GameState::getInstance()// singleton design pattern mono ena instance
 	return m_unique_instance;
 }
 
-bool GameState::init()// arxikopoiei to current level kai to player
-{
-	m_current_level = new Level("1.lvl");
-	m_current_level->init();
+
+bool GameState::init()
+    {
+        m_current_level = new Level("1.lvl");
+        m_current_level->init();
+        
+        m_player = new Player("Player");
+        m_player->init();
+
+		m_coin = new Coin("Coin");
+		m_coin->init();
+		
+   
+
+        graphics::preloadBitmaps(getAssetDir());
+        graphics::setFont(m_asset_path + "OpenSans-Regular.ttf");
+
+        m_current_level->init();
+
+        return true;
+    }
 	
-	m_player = new Player("Player");
-	m_player->init();
 
 	
 
@@ -41,14 +57,9 @@ bool GameState::init()// arxikopoiei to current level kai to player
 
 	
 
-	graphics::preloadBitmaps(getAssetDir());// preload bitmaps edw arxikopoieitai to graphics
-	graphics::setFont(m_asset_path + "OpenSans-Regular.ttf");// arxikopoieitai to font
-
-	return true;
-
-	m_current_level->init();
 	
-}
+	
+
 
 void GameState::draw()// edw ginetai h emfanish tou current level kai tou player(o player emfanizetai panw apo to level)
 {

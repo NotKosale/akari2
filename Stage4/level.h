@@ -17,8 +17,12 @@ class Level : public GameObject
 	// add some collidable blocks
 	std::vector<Box> m_blocks;
 	std::vector<Box> m_blocks_no_collide;
+	std::vector<Box> m_blocks_no_items;
+	std::vector<Box> m_blocks_coin;
 	std::vector<std::string> m_block_names;
 	std::vector<std::string> m_block_no_names;
+	std::vector<std::string> m_block_items;
+	std::vector<std::string> m_block_coin_names;
 	const float m_block_size = 0.5f;
 	graphics::Brush m_block_brush;
 	graphics::Brush m_block_brush_debug;
@@ -30,6 +34,10 @@ class Level : public GameObject
 	void drawBlock(int i);
 
 	void drawNonCollidingBlock(int i);
+
+	void drawItems(int i);
+
+	void drawCoin(int i);
 
 	// detect collisions
 	void checkCollisions();

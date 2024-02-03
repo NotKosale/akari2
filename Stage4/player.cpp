@@ -173,8 +173,8 @@ void Player::init()
 	
 		int bitmapHeight = 100;
 		float layerHeight = 0.5f;
-		m_pos_x = 5.0f;
-		m_pos_y = static_cast<float>(bitmapHeight - 2) * layerHeight - m_height / 2.0f;
+		m_pos_x = 10.0f;
+		m_pos_y = static_cast<float>(bitmapHeight - 90) * layerHeight - m_height / 2.0f;
 
 
 		m_state->m_global_offset_x = m_state->getCanvasWidth() / 2.0f - m_pos_x;
@@ -294,6 +294,13 @@ void Player::movePlayer(float dt)
 	m_vx = std::min<float>(m_max_velocity, m_vx + delta_time * move * m_accel_horizontal);
 	m_vx = std::max<float>(-m_max_velocity, m_vx);
 
+	if (m_pos_x <= 0 || m_pos_x + m_width >= m_state->getCanvasWidth()) {
+		isTouchingWall = true;
+	}
+	else {
+		isTouchingWall = false;
+	}
+
 	// friction
 	m_vx -= 0.2f * m_vx / (0.1f + fabs(m_vx));
 
@@ -304,11 +311,27 @@ void Player::movePlayer(float dt)
 	// adjust horizontal position
 	m_pos_x += m_vx * delta_time;
 
+	isTouchingWall = isCollidingSideways;
 	// jump only when not in flight:
 	std::cout << m_state->getPlayer()->m_vy << std::endl;
-	if (m_vy == 0.0f || isCollidingSideways == true)
-		m_vy -= (graphics::getKeyState(graphics::SCANCODE_W) ? m_accel_vertical : 0.0f) * 0.02f;// not delta_time!! Burst 
-	
+	// jump only when not in flight or touching a wall:
+	if ((m_vy == 0.0f && !isTouchingWall) && graphics::getKeyState(graphics::SCANCODE_W))
+	{
+		m_vy -= m_accel_vertical * 0.02f; // not delta_time!! Burst
+
+		// if player is touching a wall, apply force in opposite direction
+		if (isTouchingWall)
+		{
+			// if player is touching left wall, push to the right
+			if (m_pos_x <= 0) {
+				m_vx = m_accel_horizontal * 0.02f;
+			}
+			// if player is touching right wall, push to the left
+			else if (m_pos_x + m_width >= m_state->getCanvasWidth()) {
+				m_vx = -m_accel_horizontal * 0.02f;
+			}
+		}
+	}
 	else
 	{
 		m_vy -= (graphics::getKeyState(graphics::SCANCODE_S) ? m_accel_vertical : 0.0f) * -0.005f; // not delta_time!! Burst 
