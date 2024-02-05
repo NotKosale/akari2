@@ -1,4 +1,5 @@
 #include "player.h"
+#include "level.h"
 #include "util.h"
 #include <cmath>
 #include <iostream>
@@ -12,6 +13,23 @@ void Player::update(float dt)
 	// update offset for other game objects
 	m_state->m_global_offset_x = m_state->getCanvasWidth() / 2.0f - m_pos_x;
 	m_state->m_global_offset_y = m_state->getCanvasHeight() / 2.0f - m_pos_y;
+
+	if (m_animation_state == ATTACK)
+	{
+		// Set attackBox properties for LIGHT_ATTACK state
+		attackBox.m_pos_x = 4.3f;
+		attackBox.m_pos_y = 2.2f;
+		attackBox.m_width = 0.87f;
+		attackBox.m_height = 0.6f;
+	}
+	else
+	{
+		// Set default attackBox properties
+		attackBox.m_pos_x = 0;
+		attackBox.m_pos_y = 0;
+		attackBox.m_width = 0; // Default width
+		attackBox.m_height = 0; // Default height
+	}
 
 	GameObject::update(dt);
 
@@ -30,8 +48,8 @@ void Player::draw()
 	}
 	
 	
-	animationtime += 0.07f;
 	
+	animationtime += 0.07f;
 
 	//Fall Trigger
 	if (m_vy > 0.0f && !graphics::getKeyState(graphics::SCANCODE_K) && !graphics::getKeyState(graphics::SCANCODE_L))
@@ -135,6 +153,16 @@ void Player::draw()
 		{
 			int sprite = (int)fmod(animationtime * 2, m_spritesLightAttack.size());
 			m_brush_player.texture = m_spritesLightAttack[sprite];
+			if (m_state->m_debugging)
+			{
+				graphics::Brush br;
+				br.fill_color[0] = 1.0f;
+				br.fill_color[1] = 0.0f;
+				br.fill_color[2] = 0.0f;
+				br.fill_opacity = 0.3f;
+				graphics::drawRect(attackBox.m_pos_x, attackBox.m_pos_y, attackBox.m_width, attackBox.m_height, br);
+			}
+			
 			graphics::drawRect(m_state->getCanvasWidth() * 0.5f, m_state->getCanvasHeight() * 0.5f, playerWidth, playerHeight, m_brush_player);
 		}
 	}
@@ -261,7 +289,7 @@ void Player::init()
 
 void Player::debugDraw()
 {
-	graphics::Brush debug_brush;
+	
 	SETCOLOR(debug_brush.fill_color, 1, 0.3f, 0);
 	SETCOLOR(debug_brush.outline_color, 1, 0.1f, 0);
 	debug_brush.fill_opacity = 0.1f;
@@ -280,27 +308,75 @@ void Player::movePlayer(float dt)
 {
 	float delta_time = dt / 1000.0f;
 
+	isTouchingWall = isCollidingSideways;
+	// jump only when not in flight:
+	
+
+
+	if (isTouchingWall == true)
+	{
+		// if player is touching left wall, push to the right
+		if (m_vx <= 0) {
+			m_vx = m_accel_horizontal * 0.02f;
+			isTouchingWallLeft = true;
+			
+		}
+		// if player is touching right wall, push to the left
+		else if (m_pos_x + m_width >= m_state->getCanvasWidth()) {
+			m_vx = -m_accel_horizontal * 0.02f;
+			isTouchingWallRight = true;
+		}
+		else
+		{
+			isTouchingWallLeft = false;
+			isTouchingWallRight = false;
+
+		}
+	}
+	else
+	{
+		isTouchingWallLeft = false;
+		isTouchingWallRight = false;
+	}
+	
+	// jump only when not in flight or touching a wall:
+	if ((m_vy == 0.0f && !isTouchingWall) && graphics::getKeyState(graphics::SCANCODE_W))
+	{
+		m_vy -= m_accel_vertical * 0.02f; // not delta_time!! Burst
+
+		// if player is touching a wall, apply force in opposite direction
+		
+		
+	}
+	else
+	{
+		m_vy -= (graphics::getKeyState(graphics::SCANCODE_S) ? m_accel_vertical : 0.0f) * -0.005f; // not delta_time!! Burst 
+	}
+
 	// Stage 2 code: Acceleration-based velocity
 	float move = 0.0f;
 	if (graphics::getKeyState(graphics::SCANCODE_A))
 	{
-		move -= 1.5f;
+		if (!isTouchingWallLeft)
+		{
+			move -= 1.0f;
+			
+		}
 	}
 	if (graphics::getKeyState(graphics::SCANCODE_D))
 	{
-		move += 1.5f;
+		if (!isTouchingWallRight)
+		{
+			std::cout << "Right" << std::endl;
+			move += 1.0f;
+		}
+		
 	}
 		
 	m_vx = std::min<float>(m_max_velocity, m_vx + delta_time * move * m_accel_horizontal);
 	m_vx = std::max<float>(-m_max_velocity, m_vx);
 
-	if (m_pos_x <= 0 || m_pos_x + m_width >= m_state->getCanvasWidth()) {
-		isTouchingWall = true;
-	}
-	else {
-		isTouchingWall = false;
-	}
-
+	
 	// friction
 	m_vx -= 0.2f * m_vx / (0.1f + fabs(m_vx));
 
@@ -311,32 +387,7 @@ void Player::movePlayer(float dt)
 	// adjust horizontal position
 	m_pos_x += m_vx * delta_time;
 
-	isTouchingWall = isCollidingSideways;
-	// jump only when not in flight:
-	std::cout << m_state->getPlayer()->m_vy << std::endl;
-	// jump only when not in flight or touching a wall:
-	if ((m_vy == 0.0f && !isTouchingWall) && graphics::getKeyState(graphics::SCANCODE_W))
-	{
-		m_vy -= m_accel_vertical * 0.02f; // not delta_time!! Burst
-
-		// if player is touching a wall, apply force in opposite direction
-		if (isTouchingWall)
-		{
-			// if player is touching left wall, push to the right
-			if (m_pos_x <= 0) {
-				m_vx = m_accel_horizontal * 0.02f;
-			}
-			// if player is touching right wall, push to the left
-			else if (m_pos_x + m_width >= m_state->getCanvasWidth()) {
-				m_vx = -m_accel_horizontal * 0.02f;
-			}
-		}
-	}
-	else
-	{
-		m_vy -= (graphics::getKeyState(graphics::SCANCODE_S) ? m_accel_vertical : 0.0f) * -0.005f; // not delta_time!! Burst 
-	}
-
+	
 	// add gravity
 	m_vy += delta_time * m_gravity;
 

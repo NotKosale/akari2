@@ -18,6 +18,7 @@ private:
 	class Level* m_current_level = 0;
 	class Player* m_player = 0;
 	class Coin* m_coin = 0;
+	class Player* m_lightattack = 0;
 
 	
 
@@ -44,6 +45,7 @@ public:
 	float getCanvasWidth() { return m_canvas_width; }
 	float getCanvasHeight() { return m_canvas_height; }
 
+	
 	class Player* getPlayer() { return m_player; }
 	class Coin* getCoin() { return m_coin; }
 	

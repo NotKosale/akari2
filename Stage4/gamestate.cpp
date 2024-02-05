@@ -39,6 +39,8 @@ bool GameState::init()
 
 		m_coin = new Coin("Coin");
 		m_coin->init();
+
+	
 		
    
 

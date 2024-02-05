@@ -10,6 +10,9 @@ class Coin : public Box, public GameObject
 	std::vector<std::string> m_sprites;
 
 	graphics::Brush m_brush_coin;
+	;
+	
+	
 public:
 
 	float x;

@@ -4,8 +4,10 @@
 #include <sgg/graphics.h>
 #include "box.h"
 
+
 class Player : public Box, public GameObject
 {
+	graphics::Brush debug_brush;
 	// animated player
 	std::vector<std::string> m_spritesidle;
 	std::vector<std::string> m_spritesleft;
@@ -22,6 +24,7 @@ class Player : public Box, public GameObject
 
 	graphics::Brush m_brush_player;
 
+	Box attackBox;
 	const float m_accel_horizontal = 20.0f;
 	const float m_accel_vertical = 250.1f;
 	const float m_max_velocity = 5.0f;
@@ -37,19 +40,23 @@ public:
 		HEAVYATTACK
 	};
 
-	float playerWidth = 1.7f;
-	float playerHeight = 1.7f;
-	float playerCollisionWidth = 0.3f;
-	float playerCollisionHeight = 0.51f;
+	float playerWidth = 1.8f;
+	float playerHeight = 1.8f;
+	float playerCollisionWidth = 0.20f;
+	float playerCollisionHeight = 0.50f;
 	bool isCollidingSideways = false;
 	bool isTouchingWall = false;
+	bool isTouchingWallRight = false;
+	bool isTouchingWallLeft = false;
 	bool isCollidingDown = false;
 	float m_vx = 0.0f;
 	float m_vy = 0.0f;
 	float animationtime = 0.0f;
 	int forwardDir = 1;
 	AnimationState m_animation_state = IDLE;
-
+	
+    // In player.h
+    Box getAttackBox() const { return attackBox; }
 
 
 

@@ -41,7 +41,7 @@ namespace graphics
 														   ///< value of 1.0f means "fully opaque", while a value of 0.0f means 
 											               ///< fully transparent (invisible).
 		
-		float fill_secondary_opacity = 1.f;				   ///< The opacity of the second fill color, used for the gradient.
+		float fill_secondary_opacity = 0.0f;				   ///< The opacity of the second fill color, used for the gradient.
 														   ///<
 
 		float outline_color[3] = { 1.f,1.f,1.f };          ///< The color of the shape outline (where applicable). Most drawn

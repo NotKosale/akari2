@@ -4,6 +4,7 @@
 #include "coin.h"
 #include "util.h"
 #include <iostream>
+#include "Coin.h"
 
 
 void Level::drawBlock(int i)
@@ -54,17 +55,54 @@ void Level::drawItems(int i)
 		graphics::drawRect(x, y, m_block_size, m_block_size, m_block_brush_debug);
 }
 
-void Level::drawCoin(int i)
+void Level::drawCoin1()
 {
-	Box& box = m_blocks_coin[i];
+	Box& box = m_blocks_coin1[0];
 
 	float x = (box.m_pos_x + m_state->m_global_offset_x);
 	float y = (box.m_pos_y + m_state->m_global_offset_y);
 
-	m_state->getCoin()->draw(x, y , 0.4f, 0.4f);
+	m_state->getCoin()->draw(x, y , 0.6f, 0.6f);
 
 	if (m_state->m_debugging)
 		graphics::drawRect(x, y, m_block_size, m_block_size, m_block_brush_debug);
+}
+void Level::drawCoin2()
+{
+	Box& box = m_blocks_coin2[0];
+
+	float x = (box.m_pos_x + m_state->m_global_offset_x);
+	float y = (box.m_pos_y + m_state->m_global_offset_y);
+
+	m_state->getCoin()->draw(x, y, 0.6f, 0.6f);
+
+	if (m_state->m_debugging)
+		graphics::drawRect(x, y, m_block_size, m_block_size, m_block_brush_debug);
+}
+void Level::drawCoin3()
+{
+	Box& box = m_blocks_coin3[0];
+
+	float x = (box.m_pos_x + m_state->m_global_offset_x);
+	float y = (box.m_pos_y + m_state->m_global_offset_y);
+
+	m_state->getCoin()->draw(x, y, 0.6f, 0.6f);
+
+	if (m_state->m_debugging)
+		graphics::drawRect(x, y, m_block_size, m_block_size, m_block_brush_debug);
+}
+void Level::drawAttack()
+{
+	Box& box = m_attack[0];
+
+	float x = (4.3f);
+	float y = (2.2f);
+
+	m_block_brush_no.fill_opacity = 0.0f;
+	graphics::drawRect(x, y, 0.87f, 0.6, m_block_brush_no);
+
+	if (m_state->m_debugging)
+		graphics::drawRect(x, y, 0.87f, 0.6, m_block_brush_debug);
 }
 
 
@@ -80,43 +118,18 @@ void Level::checkCollisions()
 			printf("*");
 	}
 	*/
-		for (auto& block : m_blocks)
+	for (auto& block : m_blocks)
+	{
+		float offset = 0.0f;
+		if (offset = m_state->getPlayer()->intersectDown(block))
 		{
-			float offset = 0.0f;
+			m_state->getPlayer()->m_pos_y += offset - 0.001f;
 
+			m_state->getPlayer()->m_vy = 0.0f;
 
-			// Skip collision check for non-collidable blocks
-			
-
-			if (offset = m_state->getPlayer()->intersectDown(block))
-			{
-				if (m_state->getPlayer()->m_vy > 1.0f)
-					graphics::playSound(m_state->getFullAssetPath("land.wav"), 0.2f);
-
-				m_state->getPlayer()->isCollidingDown = true;
-				m_state->getPlayer()->m_vy = 0.0f;
-
-				if ((m_state->getPlayer()->m_vy == 0 || !m_state->getPlayer()->isCollidingSideways) && m_state->getPlayer()->isCollidingDown)
-				{
-					if (m_state->getPlayer()->isCollidingSideways)
-					{
-						m_state->getPlayer()->m_vx = 0.0f;
-						m_state->getPlayer()->m_vy = 0.0f;
-						m_state->getPlayer()->isCollidingSideways = true;
-
-					}
-
-					m_state->getPlayer()->m_pos_y += offset;
-
-					break;
-				}
-			}
-			else
-			{
-				m_state->getPlayer()->isCollidingDown = false;
-			}
+			break;
 		}
-
+	}
 		for (auto& block : m_blocks) {
 			if (float offset = m_state->getPlayer()->intersectUp(block)) {
 				m_state->getPlayer()->m_pos_y += offset;
@@ -134,24 +147,83 @@ void Level::checkCollisions()
 		for (auto& block : m_blocks)
 		{
 			float offset = 0.0f;
-			if (offset = m_state->getPlayer()->intersectSideways(block))
+			if (offset = m_state->getPlayer()->intersectLeft(block))
 			{
 				m_state->getPlayer()->isCollidingSideways = true;
 				m_state->getPlayer()->m_pos_x += offset;
 				m_state->getPlayer()->m_vx += 0.0f;
-				
-
-				
-
-
+				break;
+			}
+			else if (offset = m_state->getPlayer()->intersectRight(block))
+			{
+				m_state->getPlayer()->isCollidingSideways = true;
+				m_state->getPlayer()->m_pos_x += offset;
+				m_state->getPlayer()->m_vx += 0.0f;
 				break;
 			}
 			else
 			{
 				m_state->getPlayer()->isCollidingSideways = false;
 			}
+		}
+		for (auto& block : m_blocks_coin1)
+		{
+			for (auto& attackBox : m_attack)
+			{
+				if (block.isIntersecting(attackBox))
+				{
+					// Intersection detected, handle it here
+					std::cout << "Coin1 is intersecting with attack" << std::endl;
+				}
+			}
+		}
+		
+		for (auto& block : m_blocks_coin1)
+		{
+			float offset = 0.0f;
+			
+
+			if (offset = m_state->getPlayer()->isIntersecting(block))
+			{
+				if (!coincollected1) {
+					graphics::playSound(m_state->getFullAssetPath("coin.mp3"), 0.5f);
+				}
+				coincollected1 = true;
+			}
+			
+			
+			
+			
+			
+		}
+		for (auto& block : m_blocks_coin2)
+		{
+			float offset = 0.0f;
+			if (offset = m_state->getPlayer()->isIntersecting(block))
+			{
+				if (!coincollected2) {
+					graphics::playSound(m_state->getFullAssetPath("coin.mp3"), 0.5f);
+				}
+				coincollected2 = true;
+			}
+			
 
 		}
+		for (auto& block : m_blocks_coin3)
+		{
+			float offset = 0.0f;
+			if (offset = m_state->getPlayer()->isIntersecting(block))
+			{
+				if (!coincollected3) {
+					graphics::playSound(m_state->getFullAssetPath("coin.mp3"), 0.5f);
+				}
+				coincollected3 = true;
+			}
+			
+
+		}
+
+
 
 
 }
@@ -193,11 +265,23 @@ void Level::draw()
 	if (m_state->getPlayer()->isActive())
 		m_state->getPlayer()->draw();
 
-	//draw coins
-	for (int i = 0; i < m_blocks_coin.size(); i++)
+	if (graphics::getKeyState(graphics::SCANCODE_K))
 	{
-		drawCoin(i);
+		drawAttack();
 	}
+
+	//draw coins
+	if (!coincollected1)
+		drawCoin1();
+	if (!coincollected2)
+		drawCoin2();
+	if (!coincollected3)
+		drawCoin3();
+
+	
+	
+	
+	
 
 	// draw blocks
 
@@ -205,6 +289,33 @@ void Level::draw()
 	{
 		drawBlock(i);
 	}
+	m_brush_kunai.outline_opacity = 0.0f;
+	if (!coincollected1 && !coincollected2 && !coincollected3 )
+	{
+		m_brush_kunai.texture = m_state->getFullAssetPath("hud0.png");
+		graphics::drawRect(0.9, 0.5, w * 0.2f, h * 0.2f, m_brush_kunai);
+	}
+	if (coincollected1)
+	{
+		
+		m_brush_kunai.texture = m_state->getFullAssetPath("hud1.png");
+		graphics::drawRect(0.9, 0.5, w * 0.2f, h * 0.2f, m_brush_kunai);
+
+	}
+	if (coincollected2)
+	{
+		m_brush_kunai.texture = m_state->getFullAssetPath("hud2.png");
+		graphics::drawRect(0.9, 0.5, w * 0.2f, h * 0.2f, m_brush_kunai);
+	}
+	if (coincollected3)
+	{
+		m_brush_kunai.texture = m_state->getFullAssetPath("hud3.png");
+		graphics::drawRect(0.9, 0.5, w * 0.2f, h * 0.2f, m_brush_kunai);
+
+		
+	}
+	
+
 	
 }
 
@@ -223,7 +334,7 @@ void Level::init()
 		{"46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "08", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00","00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "11", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46"},
 		{"46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "08", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00","00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "11", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46"},
 		{"46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "08", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00","00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "11", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46"},
-		{"46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "08", "00", "00", "00", "00", "00", "00", "00", "00", "00", "99", "00", "00", "00","00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "11", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46"},
+		{"46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "08", "00", "00", "00", "00", "00", "00", "00", "00", "00", "99", "00", "00", "00","00", "00", "00", "00", "98", "00", "97", "00", "00", "00", "00", "00", "00", "11", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46"},
 		{"46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "08", "00", "00", "00", "00", "00", "28", "00", "00", "05", "06", "07", "00", "00","00", "00", "05", "06", "06", "06", "06", "06", "07", "00", "00", "00", "28", "11", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46"},
 		{"46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "08", "00", "00", "68", "69", "00", "00", "00", "00", "00", "00", "00", "00", "00","00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "11", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46"},
 		{"46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "08", "00", "00", "70", "71", "00", "00", "00", "00", "00", "00", "00", "00", "00","00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "11", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46"},
@@ -233,9 +344,9 @@ void Level::init()
 		{"46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "08", "00", "00", "78", "79", "00", "00", "44", "14", "46", "08", "55", "55", "55","61", "55", "55", "11", "46", "03", "45", "00", "00", "00", "00", "00", "00", "11", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46"},
 		{"46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "03", "01", "01", "01", "01", "01", "01", "14", "46", "46", "23", "07", "51", "05","07", "51", "05", "24", "46", "46", "03", "01", "01", "01", "01", "01", "01", "14", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46"},
 		{"46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "66", "18", "18", "18", "32", "18", "18", "18", "18", "18", "22", "49", "55", "49","49", "49", "61", "21", "18", "18", "18", "32", "18", "18", "35", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46"},
-		{"46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "08", "00", "00", "00", "20", "00", "00", "00", "00", "00", "20", "55", "55", "49","55", "55", "55", "20", "00", "00", "00", "20", "00", "00", "43", "18", "18", "67", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46"},
-		{"46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "08", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "61", "55", "55","49", "49", "55", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "11", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46"},
-		{"46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "08", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "55", "55","61", "61", "55", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "11", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46"},
+		{"46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "08", "00", "00", "00", "20", "00", "00", "00", "00", "00", "20", "55", "55", "49","55", "55", "55", "20", "80", "51", "80", "20", "49", "84", "43", "18", "18", "67", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46"},
+		{"46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "08", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "61", "55", "55","49", "49", "55", "51", "51", "82", "51", "49", "83", "49", "49", "49", "49", "11", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46"},
+		{"46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "08", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "55", "55","61", "61", "55", "51", "81", "82", "51", "49", "49", "86", "86", "49", "49", "11", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46"},
 		{"46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "08", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "45", "61", "55","49", "49", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "01", "11", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46"},
 		{"46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "08", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00","00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "11", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46"},
 		{"46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46", "01", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00","00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "11", "46", "46", "46", "46", "46", "46", "46", "46", "46", "46"},
@@ -328,7 +439,23 @@ void Level::init()
 			if (lvl1[x][y] != "00") {
 				if (lvl1[x][y] == "99")
 				{
-					m_blocks_coin.emplace_back(y * m_block_size, x * m_block_size, 0.5f, 0.5f);//collisions
+					m_blocks_coin1.emplace_back(y * m_block_size, x * m_block_size, 0.3f, 0.3f);//collisions
+				}
+				if (lvl1[x][y] == "98")
+				{
+					m_blocks_coin2.emplace_back(y * m_block_size, x * m_block_size, 0.3f, 0.3f);//collisions
+				}
+				if (lvl1[x][y] == "97")
+				{
+					m_blocks_coin3.emplace_back(y * m_block_size, x * m_block_size, 0.3f, 0.3f);//collisions
+				}
+				for (int i = 68; i < 80; i++)
+				{
+					if (lvl1[x][y] == std::to_string(i))
+					{
+						m_blocks_no_collide.emplace_back(y * m_block_size, x * m_block_size, 0.5f, 0.5f);//collisions
+						m_block_no_names.push_back("Tile_" + std::string(lvl1[x][y]) + ".png");
+					}
 				}
 				if (lvl1[x][y] == "02")
 				{
@@ -355,7 +482,10 @@ void Level::init()
 					m_blocks_no_collide.emplace_back(y * m_block_size, x * m_block_size, 0.5f, 0.5f);//collisions
 					m_block_no_names.push_back("Tile_51.png");
 				}
-				else if (lvl1[x][y] != "02" && lvl1[x][y] != "55" && lvl1[x][y] != "61" && lvl1[x][y] != "49" && lvl1[x][y] != "51" && lvl1[x][y] != "99")
+				else if (lvl1[x][y] != "02" && lvl1[x][y] != "55" && lvl1[x][y] != "61" && lvl1[x][y] != "49" && lvl1[x][y] != "51" && lvl1[x][y] != "99"
+					&& lvl1[x][y] != "98" && lvl1[x][y] != "97" && lvl1[x][y] != "68" && lvl1[x][y] != "69" && lvl1[x][y] != "70" && lvl1[x][y] != "71" && lvl1[x][y] != "72"
+					&& lvl1[x][y] != "73" && lvl1[x][y] != "74" && lvl1[x][y] != "75" && lvl1[x][y] != "76" && lvl1[x][y] != "77" && lvl1[x][y] != "78" && lvl1[x][y] != "79"
+					)
 				{
 
 					m_blocks.emplace_back(y * m_block_size, x * m_block_size, 0.5f, 0.5f);//collisions
@@ -393,7 +523,7 @@ void Level::init()
 		{"00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00"},
 		{"00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00"},
 		{"00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "01", "02", "00", "05", "06", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00"},
-		{"00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "03", "04", "00", "07", "08", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00"},
+		{"00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "03", "04", "00", "07", "08", "00", "00", "00", "00", "00", "00", "00", "00", "00", "10", "11", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00"},
 		{"00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00"},
 		{"00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00"},
 		{"00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00"},
